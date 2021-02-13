@@ -19,19 +19,28 @@ const KEY = '17475640-f7b4730b8a058e6d7688ea10f'; //my API key=17475640-f7b4730b
 const showImages = (images) => {
     imagesArea.style.display = 'block';
     gallery.innerHTML = '';
+
     // show gallery title
     galleryHeader.style.display = 'flex';
+
     images.forEach(image => {
         let div = document.createElement('div');
         div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
         div.innerHTML = `<img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
         gallery.appendChild(div)
+        toggleSpinner(false);
     })
+
 
 }
 
 const getImages = (query) => {
     // fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
+
+    // call spinner:
+    toggleSpinner(true);
+
+
 
     // API collect and Showing Image problem fix
     fetch("https://pixabay.com/api/?key=" + KEY + "&q=" + encodeURIComponent(query))
@@ -40,7 +49,8 @@ const getImages = (query) => {
             console.log(data);
             showImages(data.hits);
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err));
+
 }
 
 let slideIndex = 0;
@@ -52,8 +62,8 @@ const selectItem = (event, img) => {
     if (item === -1) {
         sliders.push(img);
     } else {
-        // alert('Hey, Already added !')
-        sliders.pop(img)
+        alert('Hey, Already added !')
+            // sliders.pop(img)
             // something to be better;
     }
 
@@ -75,8 +85,10 @@ const createSlider = () => {
   <span class="next" onclick="changeItem(1)"><i class="fas fa-chevron-right"></i></span>
   `;
 
-    sliderContainer.appendChild(prevNext)
+    sliderContainer.appendChild(prevNext);
+
     document.querySelector('.main').style.display = 'block';
+
     // hide image aria
     imagesArea.style.display = 'none';
     const duration = document.getElementById('duration').value || 1000;
@@ -140,13 +152,14 @@ var searchInput = document.getElementById("search");
 searchInput.addEventListener("keypress", function(event) {
     // Number 13 is the "Enter" key on the keyboard
     if (event.key === "Enter") {
-
+        toggleSpinner();
         document.getElementById("search-btn").click();
         document.querySelector('.main').style.display = 'none';
         clearInterval(timer);
         const search = document.getElementById('search');
         getImages(search.value)
         sliders.length = 0;
+
     }
 
 });
@@ -156,17 +169,22 @@ searchBtn.addEventListener('click', function() {
     clearInterval(timer);
     const search = document.getElementById('search');
     getImages(search.value)
+
     sliders.length = 0;
+
 })
 
 sliderBtn.addEventListener('click', function() {
-        createSlider();
-    })
-    // var n = 0;
-    // do {
+    createSlider();
+})
 
-//     console.log("Console and google");
+//  Extra features for this Assignment: added spinner :
 
-//     n++;
-// }
-// while (n > 0)
+const toggleSpinner = (show) => {
+    const spinner = document.getElementById("spinnerId");
+    if (show) {
+        spinner.classList.remove("d-none");
+    } else {
+        spinner.classList.add("d-none");
+    }
+}
