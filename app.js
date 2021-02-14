@@ -1,21 +1,57 @@
+// fix problems :
+/*
+main_part:
+1.Showing Image by API
+2.Enter trigger on image search Button
+3.negative time problem
+4.slider showing
+5.select unselect
+
+for bonus marks:
+1.Enter trigger features on duration button
+2.loading spinner
+3.if search input is empty then show an alert
+4.catch the API error
+*/
+
 const imagesArea = document.querySelector('.images');
 const gallery = document.querySelector('.gallery');
 const galleryHeader = document.querySelector('.gallery-header');
 const searchBtn = document.getElementById('search-btn');
 const sliderBtn = document.getElementById('create-slider');
 const sliderContainer = document.getElementById('sliders');
-
+const searchInput = document.getElementById("search");
 
 // selected image 
 let sliders = [];
 
 
-// If this key doesn't work
-// Find the name in the url and go to their website
-// to create your own api key
-const KEY = '17475640-f7b4730b8a058e6d7688ea10f'; //my API key=17475640-f7b4730b8a058e6d7688ea10f
+//my API key=17475640-f7b4730b8a058e6d7688ea10f
+const KEY = '17475640-f7b4730b8a058e6d7688ea10f';
+const getImages = (query) => {
 
-// show images 
+        if (query === '') {
+            alert("Enter a Valid Value for get image");
+
+        } else {
+            // call spinner:
+            toggleSpinner(true);
+            // API collect and Showing Image problem fix
+            fetch("https://pixabay.com/api/?key=" + KEY + "&q=" + encodeURIComponent(query))
+                .then(response => response.json())
+                .then(data => {
+                    showImages(data.hits);
+                    console.log(data.hits);
+                })
+                .catch(err => {
+
+                    alert("API is unavailable or API key is wrong" + "\n" + err);
+
+                });
+        }
+
+    }
+    // show images 
 const showImages = (images) => {
     imagesArea.style.display = 'block';
     gallery.innerHTML = '';
@@ -27,32 +63,16 @@ const showImages = (images) => {
         let div = document.createElement('div');
         div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
         div.innerHTML = `<img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
-        gallery.appendChild(div)
+        gallery.appendChild(div);
+        // after load data toggle spinner is called of vanish loading;
         toggleSpinner(false);
     })
 
 
 }
 
-const getImages = (query) => {
-    // fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
 
-    // call spinner:
-    toggleSpinner(true);
-
-
-
-    // API collect and Showing Image problem fix
-    fetch("https://pixabay.com/api/?key=" + KEY + "&q=" + encodeURIComponent(query))
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            showImages(data.hits);
-        })
-        .catch(err => console.log(err));
-
-}
-
+// select item for create slider
 let slideIndex = 0;
 const selectItem = (event, img) => {
     let element = event.target;
@@ -69,6 +89,8 @@ const selectItem = (event, img) => {
 
 
 }
+
+// slider created
 var timer
 const createSlider = () => {
     // check slider image length
@@ -115,7 +137,7 @@ const createSlider = () => {
 
             slideIndex++;
             changeSlide(slideIndex);
-        }, -duration);
+        }, -1 * duration);
     }
 
 }
@@ -147,8 +169,8 @@ const changeSlide = (index) => {
 }
 
 
+//Keyboards Enter features:
 
-var searchInput = document.getElementById("search");
 searchInput.addEventListener("keypress", function(event) {
     // Number 13 is the "Enter" key on the keyboard
     if (event.key === "Enter") {
@@ -163,13 +185,14 @@ searchInput.addEventListener("keypress", function(event) {
     }
 
 });
+
+
 // search button;
 searchBtn.addEventListener('click', function() {
     document.querySelector('.main').style.display = 'none';
     clearInterval(timer);
     const search = document.getElementById('search');
     getImages(search.value)
-
     sliders.length = 0;
 
 })
@@ -178,8 +201,12 @@ sliderBtn.addEventListener('click', function() {
     createSlider();
 })
 
-//  Extra features for this Assignment: added spinner :
 
+
+
+
+
+//  Extra features for this Assignment: added spinner :
 const toggleSpinner = (show) => {
     const spinner = document.getElementById("spinnerId");
     if (show) {
@@ -188,3 +215,19 @@ const toggleSpinner = (show) => {
         spinner.classList.add("d-none");
     }
 }
+
+
+
+// keyboard enter features added in take duration from user:
+var durationInput = document.getElementById("duration");
+durationInput.addEventListener("keypress", function(event) {
+
+    if (event.key === "Enter") {
+
+        document.getElementById("create-slider").click();
+
+
+
+    }
+    createSlider();
+});
