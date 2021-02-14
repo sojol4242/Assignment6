@@ -1,11 +1,11 @@
 // fix problems :
 /*
 main_part:
-1.Showing Image by API
-2.Enter trigger on image search Button
-3.negative time problem
-4.slider showing
-5.select unselect
+1.Showing Image by API=ok
+2.Enter trigger on image search Button=ok
+3.negative time problem=ok
+4.slider showing=ok
+5.select unselect=ok;
 
 for bonus marks:
 1.Enter trigger features on duration button
@@ -13,6 +13,9 @@ for bonus marks:
 3.if search input is empty then show an alert
 4.catch the API error
 */
+
+
+
 
 const imagesArea = document.querySelector('.images');
 const gallery = document.querySelector('.gallery');
@@ -44,7 +47,7 @@ const getImages = (query) => {
                     console.log(data.hits);
                 })
                 .catch(err => {
-
+                    // If API is missing :
                     alert("API is unavailable or API key is wrong" + "\n" + err);
 
                 });
@@ -78,17 +81,20 @@ const selectItem = (event, img) => {
     let element = event.target;
     element.classList.toggle('added');
 
+
+
     let item = sliders.indexOf(img);
     if (item === -1) {
         sliders.push(img);
+
     } else {
-        alert('Hey, Already added !')
-            // sliders.pop(img)
-            // something to be better;
+        sliders.splice(item, 1);
+
     }
 
 
 }
+
 
 // slider created
 var timer
@@ -124,21 +130,28 @@ const createSlider = () => {
         sliderContainer.appendChild(item)
     })
     changeSlide(0);
-    if (duration >= 0) {
-        timer = setInterval(function() {
 
-            slideIndex++;
-            changeSlide(slideIndex);
-        }, duration);
-    }
     // solve the negative timing issue
-    else {
-        timer = setInterval(function() {
 
-            slideIndex++;
-            changeSlide(slideIndex);
-        }, -1 * duration);
-    }
+    timer = setInterval(function() {
+
+        slideIndex++;
+        changeSlide(slideIndex);
+    }, Math.abs(duration));
+
+    // if (duration >= 0) {
+    // timer = setInterval(function() {
+
+    //     slideIndex++;
+    //     changeSlide(slideIndex);
+    // }, Math.abs(duration));
+    // } else {
+    //     timer = setInterval(function() {
+
+    //         slideIndex++;
+    //         changeSlide(slideIndex);
+    //     }, duration);
+    // }
 
 }
 
@@ -218,16 +231,13 @@ const toggleSpinner = (show) => {
 
 
 
-// keyboard enter features added in take duration from user:
+// keyboard enter trigger features added in take duration from user:
 var durationInput = document.getElementById("duration");
 durationInput.addEventListener("keypress", function(event) {
 
     if (event.key === "Enter") {
 
         document.getElementById("create-slider").click();
-
-
-
+        createSlider();
     }
-    createSlider();
 });
